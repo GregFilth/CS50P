@@ -263,7 +263,7 @@ class Fridge:
             print(colored("There are no recipes in your book rig^ht now.\n", "red"))
 
 
-def get_command(Fridge):
+def get_command(Fridge, test_running=None):
     """
     prompts the user for a command
     exits program if user enters "E"
@@ -289,9 +289,10 @@ def get_command(Fridge):
                 sys.exit(colored("You quit the program.\n", "red"))
             case _:
                 print(colored("Invalid input", "red"))
+        if test_running == True:
+            break
 
-
-def get_name(my_string):
+def get_name(my_string, test_running=None):
     while True:
         user_input_string = input(colored(my_string, "cyan")).strip().upper()
         if not user_input_string == "":
@@ -306,10 +307,12 @@ def get_name(my_string):
                 print(colored("You can only input letters.", "red"))
         else:
             print(colored("Please enter a valid name.", "red"))
+        if test_running == True:
+            break
     return user_input_string
 
 
-def get_number(my_string):
+def get_number(my_string, test_running=None):
     while True:
         user_input_number = (input(colored(my_string, "cyan")).strip().upper()).replace(
             ",", "."
@@ -326,7 +329,7 @@ def get_number(my_string):
                 else:
                     print(colored("You can only input numbers.", "red"))
             elif (
-                user_input_number.isnumeric()
+                user_input_number.replace(".", "").replace(",", "").isnumeric()
                 or user_input_number == "C"
                 or user_input_number == "S"
             ):
@@ -335,6 +338,8 @@ def get_number(my_string):
                 print(colored("You can only input numbers.", "red"))
         else:
             print(colored("Please enter a valid number.", "red"))
+        if test_running == True:
+            break
     return user_input_number
 
 
