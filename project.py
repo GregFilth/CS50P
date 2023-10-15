@@ -9,57 +9,6 @@ class Fridge:
         self.recipes = {}
         self.command = None
 
-    def get_name(self, my_string):
-        while True:
-            user_input_string = input(colored(my_string, "cyan")).strip().upper()
-            if not user_input_string == "":
-                if user_input_string.replace(" ", "").replace("(", "").replace(")", "").isalpha():
-                    break
-                else:
-                    print(colored("You can only input letters.", "red"))
-            else:
-                print(colored("Please enter a valid name.", "red"))
-        return user_input_string
-
-    def get_number(self, my_string):
-        while True:
-            user_input_number = (input(colored(my_string, "cyan")).strip().upper()).replace(",", ".")
-            if not user_input_number == "":
-                if user_input_number.replace("+", "").replace("-", "").replace(".", "").isnumeric() or user_input_number == "C":
-                    break
-                else:
-                    print(colored("You can only input numbers.", "red"))
-            else:
-                print(colored("Please enter a valid number.", "red"))
-        return user_input_number
-
-    def get(self):
-        """
-        prompts the user for a command
-        exits program if user enters "E"
-        prompts the user again in case of an invalid input
-        """
-
-        while True:
-            get_command = "\nWhat would you like to do? \n(C)hoose a recipe / (A)dd a recipe / (D)elete a recipe / (U)pdate inventory / (R)equest a suggestion / (E)xit program\n"
-            command = self.get_name(get_command)
-
-            match command:
-                case "C":
-                    self.choose_recipe()
-                case "A":
-                    self.add_recipe()
-                case "D":
-                    self.delete_recipe()
-                case "U":
-                    self.update_inventory()
-                case "R":
-                    self.request_suggestion()
-                case "E":
-                    sys.exit(colored("You quit the program.\n", "red"))
-                case _:
-                    print(colored("Invalid input", "red"))
-
     def choose_recipe(self):
         """
         lists the ingredients the user has to buy for a chosen recipe
@@ -73,7 +22,7 @@ class Fridge:
             recipe_str = ", ".join(recipe_list).lower()
             while True:
                 get_rec_string = f"\nWhich recipe do you want to make? Enter 'C' to cancel.\n{recipe_str}\n\n"
-                recipe_to_make = self.get_name(get_rec_string)
+                recipe_to_make = get_name(get_rec_string)
 
                 if recipe_to_make in recipe_list:
                     if not recipe_to_make == "C":
@@ -131,7 +80,7 @@ class Fridge:
             get_new_rec_string = (
                 "\nWhat's the name of the new recipe? Enter 'C' to cancel.\n"
             )
-            name_of_new_recipe = self.get_name(get_new_rec_string)
+            name_of_new_recipe = get_name(get_new_rec_string)
             if name_of_new_recipe == "C":
                 break
             elif name_of_new_recipe not in self.recipes:
@@ -143,7 +92,7 @@ class Fridge:
                     )
                 )
                 while True:
-                    ingredient_of_new_recipe = self.get_name("Ingredient: ").lower()
+                    ingredient_of_new_recipe = get_name("Ingredient: ").lower()
 
                     if ingredient_of_new_recipe.upper() == "S":
                         self.recipes[name_of_new_recipe] = dict_of_ingredients
@@ -158,13 +107,25 @@ class Fridge:
                         if not ingredient_of_new_recipe.upper() == "C":
                             if ingredient_of_new_recipe not in dict_of_ingredients:
                                 while True:
-                                    amount_of_ingredient = self.get_number("Amount: ")
+                                    amount_of_ingredient = get_number("Amount: ")
                                     if not amount_of_ingredient.upper() == "C":
-                                        dict_of_ingredients[
-                                            ingredient_of_new_recipe
-                                        ] = float(amount_of_ingredient)
-                                        print()
-                                        break
+                                        if amount_of_ingredient.upper() == "S":
+                                            self.recipes[
+                                                name_of_new_recipe
+                                            ] = dict_of_ingredients
+                                            print(
+                                                colored(
+                                                    f"Added {name_of_new_recipe.lower()} to your book.",
+                                                    "yellow",
+                                                )
+                                            )
+                                            return True
+                                        else:
+                                            dict_of_ingredients[
+                                                ingredient_of_new_recipe
+                                            ] = float(amount_of_ingredient)
+                                            print()
+                                            break
                                     else:
                                         return True
                             else:
@@ -187,7 +148,7 @@ class Fridge:
             recipe_str = ", ".join(recipe_list).lower()
             while True:
                 rec_to_del_string = f"\nWhich recipe do you want to delete from your book? Enter 'C' to cancel.\n{recipe_str}\n\n"
-                name_of_recipe = self.get_name(rec_to_del_string)
+                name_of_recipe = get_name(rec_to_del_string)
                 if name_of_recipe in recipe_list:
                     if not name_of_recipe == "C":
                         del self.recipes[name_of_recipe]
@@ -224,13 +185,13 @@ class Fridge:
             print(colored("\nCurrent inventory:", "green"))
             for element in sorted(self.inventory.items()):
                 print(f"{element[0]} - {element[1]}")
-            ch_ingred = self.get_name("\nIngredient: ").lower()
+            ch_ingred = get_name("\nIngredient: ").lower()
             if not ch_ingred.isnumeric():
                 if ch_ingred.upper() == "C":
                     break
                 else:
                     while True:
-                        ch_amount = self.get_number("Amount: ")
+                        ch_amount = get_number("Amount: ")
                         if ch_amount.upper() == "C":
                             return True
                         if ch_ingred not in self.inventory:
@@ -299,7 +260,82 @@ class Fridge:
                     )
                 )
         else:
-            print(colored("There are no recipes in your book right now.\n", "red"))
+            print(colored("There are no recipes in your book rig^ht now.\n", "red"))
+
+
+def get_command(Fridge):
+    """
+    prompts the user for a command
+    exits program if user enters "E"
+    prompts the user again in case of an invalid input
+    """
+
+    while True:
+        get_command_str = "\nWhat would you like to do? \n(C)hoose a recipe / (A)dd a recipe / (D)elete a recipe / (U)pdate inventory / (R)equest a suggestion / (E)xit program\n"
+        command = get_name(get_command_str)
+
+        match command:
+            case "C":
+                Fridge.choose_recipe()
+            case "A":
+                Fridge.add_recipe()
+            case "D":
+                Fridge.delete_recipe()
+            case "U":
+                Fridge.update_inventory()
+            case "R":
+                Fridge.request_suggestion()
+            case "E":
+                sys.exit(colored("You quit the program.\n", "red"))
+            case _:
+                print(colored("Invalid input", "red"))
+
+
+def get_name(my_string):
+    while True:
+        user_input_string = input(colored(my_string, "cyan")).strip().upper()
+        if not user_input_string == "":
+            if (
+                user_input_string.replace(" ", "")
+                .replace("(", "")
+                .replace(")", "")
+                .isalpha()
+            ):
+                break
+            else:
+                print(colored("You can only input letters.", "red"))
+        else:
+            print(colored("Please enter a valid name.", "red"))
+    return user_input_string
+
+
+def get_number(my_string):
+    while True:
+        user_input_number = (input(colored(my_string, "cyan")).strip().upper()).replace(
+            ",", "."
+        )
+        if not user_input_number == "":
+            if user_input_number.startswith("-") or user_input_number.startswith("+"):
+                if (
+                    user_input_number.replace(user_input_number[0], "")
+                    .replace(".", "")
+                    .replace(",", "")
+                    .isnumeric()
+                ):
+                    break
+                else:
+                    print(colored("You can only input numbers.", "red"))
+            elif (
+                user_input_number.isnumeric()
+                or user_input_number == "C"
+                or user_input_number == "S"
+            ):
+                break
+            else:
+                print(colored("You can only input numbers.", "red"))
+        else:
+            print(colored("Please enter a valid number.", "red"))
+    return user_input_number
 
 
 def main():
@@ -324,8 +360,7 @@ def main():
 
     fridge.recipes = starter_recipes
     fridge.inventory = starter_inventory
-
-    fridge.get()
+    get_command(fridge)
 
 
 if __name__ == "__main__":
